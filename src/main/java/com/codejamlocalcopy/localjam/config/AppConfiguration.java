@@ -1,13 +1,22 @@
 package com.codejamlocalcopy.localjam.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+/**
+ * Application context / configurations
+ */
 @Configuration
+@ComponentScan(basePackages = {
+        "com.codejamlocalcopy.localjam.board.controller",
+        "com.codejamlocalcopy.localjam.crawler.service",
+        "com.codejamlocalcopy.localjam.storage.service"
+})
 public class AppConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
