@@ -17,8 +17,12 @@ public class TestController {
 
     private final static Logger LOG = LoggerFactory.getLogger(TestController.class);
 
+    private final IContestAccessingService contestAccessingService;
+
     @Autowired
-    private IContestAccessingService contestAccessingService;
+    public TestController(IContestAccessingService contestAccessingService) {
+        this.contestAccessingService = contestAccessingService;
+    }
 
     @RequestMapping("/")
     public String index() {

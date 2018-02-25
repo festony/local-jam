@@ -1,6 +1,7 @@
 package com.codejamlocalcopy.localjam.storage.service;
 
 import com.codejamlocalcopy.localjam.LocalJamApplication;
+import com.codejamlocalcopy.localjam.storage.exception.LocalJamStorageException;
 import com.codejamlocalcopy.localjam.storage.pojo.ContestRoot;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -30,23 +31,34 @@ public class ContestAccessingServiceImpl implements IContestAccessingService {
 
     private final static String MAIN_CONTEST_JSON_FILE_NAME = "main_contest.json";
 
+    private final IContestFilePathService filePathService;
+
     @Autowired
-    private IContestFilePathService filePathService;
+    public ContestAccessingServiceImpl(IContestFilePathService filePathService) {
+        this.filePathService = filePathService;
+    }
 
     @Override
-    public ContestRoot readContestRoot() throws IOException {
+    public ContestRoot readContestRoot() {
         Path mainContestFilePath = filePathService.getContestJsonDirPath().resolve(MAIN_CONTEST_JSON_FILE_NAME);
-        String jsonString = readFileIntoString(mainContestFilePath);
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
+        String jsonString = null;
+        try {
+            jsonString = readFileIntoString(mainContestFilePath);
+        } catch (IOException e) {
+            LOG.error("Failed to read main contest file [" + mainContestFilePath + "].", e);
+            return null;
+        }
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
 
         return gson.fromJson(jsonString, ContestRoot.class);
     }
 
     @Override
     public void writeContestRoot(String json) throws IOException {
-        Path contestFilePath = filePathService.getContestJsonDirPath().resolve(MAIN_CONTEST_JSON_FILE_NAME);
-        Files.write(contestFilePath, Lists.newArrayList(json), StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Path contestJsonDirPath = filePathService.getContestJsonDirPath();
+        Files.createDirectories(contestJsonDirPath);
+        Files.write(contestJsonDirPath.resolve(MAIN_CONTEST_JSON_FILE_NAME), Lists.newArrayList(json),
+                StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     /**

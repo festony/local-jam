@@ -12,10 +12,9 @@ public interface IContestAccessingService {
     /**
      * Read ContestRoot - the pojo object of contests main board - from storage file.
      *
-     * @return ContestRoot
-     * @throws IOException IOException
+     * @return ContestRoot or null if not existing in local storage.
      */
-    ContestRoot readContestRoot() throws IOException;
+    ContestRoot readContestRoot();
 
     /**
      * Write ContestRoot - the pojo object of contests main board - into storage file.

@@ -1,0 +1,49 @@
+{
+  "tabs": [
+    {
+      "order": 12,
+      "tournaments": [
+        {
+          "contests": [
+            {
+              "startDate": "Oct 22 2017",
+              "name": "test contest name 1",
+              "analysis": true,
+              "startDateTime": "2017-10-22T05:00:00+00:00",
+              "duration": "3hr",
+              "id": "123456"
+            },
+            {
+              "startDate": "Sep 14 2017",
+              "name": "test contest name 2",
+              "analysis": false,
+              "startDateTime": "2017-09-14T12:00:00+00:00",
+              "duration": "2hr 30min",
+              "id": "34567"
+            }
+          ],
+          "grouping": "test tab label 1",
+          "name": "test tournament name 1",
+          "last_contest_start": "2017-10-22T05:00:00+00:00",
+          "display_language": "en"
+        },
+        {
+          "contests": [],
+          "grouping": "test tab label 1",
+          "name": "test tournament name 2",
+          "last_contest_start": "2017-11-25T07:10:00+00:00",
+          "display_language": "zh"
+        }
+      ],
+      "id": "test tab id 1",
+      "label": "test tab label 1"
+    },
+    {
+      "order": 34,
+      "tournaments": [],
+      "id": "test tab id 2",
+      "label": "test tab label 2"
+    }
+  ],
+  "contests_text": "test contests text"
+}

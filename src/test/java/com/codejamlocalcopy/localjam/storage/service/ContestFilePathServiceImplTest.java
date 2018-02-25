@@ -30,11 +30,11 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 @PrepareForTest({ContestFilePathServiceImpl.class, Files.class})
 public class ContestFilePathServiceImplTest {
 
-    @InjectMocks
     private ContestFilePathServiceImpl service;
 
     @Before
     public void setUp() {
+        service = new ContestFilePathServiceImpl();
     }
 
     @Test

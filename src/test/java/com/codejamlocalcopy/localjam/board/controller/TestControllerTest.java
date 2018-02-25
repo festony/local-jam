@@ -41,13 +41,13 @@ public class TestControllerTest {
     @Mock
     private IContestAccessingService contestAccessingService;
 
-    @InjectMocks
     private TestController testController;
 
     //Add WebApplicationContext field here
 
     @Before
     public void setUp(){
+        testController = new TestController(contestAccessingService);
         mockMvc = MockMvcBuilders.standaloneSetup(testController).build();
     }
 

@@ -51,10 +51,6 @@ public class ContestFilePathServiceImpl implements IContestFilePathService {
         contestDataDirPath = root.resolve(DATA_FILE_DIR_NAME);
         contestImageDirPath = root.resolve(IMAGE_FILE_DIR_NAME);
         contestJsonDirPath = root.resolve(JSON_FILE_DIR_NAME);
-
-        Files.createDirectories(contestDataDirPath);
-        Files.createDirectories(contestImageDirPath);
-        Files.createDirectories(contestJsonDirPath);
     }
 
     @Override
