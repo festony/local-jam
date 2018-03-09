@@ -1,11 +1,14 @@
 package com.codejamlocalcopy.localjam.storage.service;
 
+import com.codejamlocalcopy.localjam.storage.exception.LocalJamStorageRuntimeException;
 import com.codejamlocalcopy.localjam.storage.pojo.ContestRoot;
 import com.codejamlocalcopy.localjam.test.common.TestUtils;
 import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,6 +21,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.stream.Stream;
@@ -29,6 +33,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 /**
@@ -52,6 +57,9 @@ public class ContestAccessingServiceImplTest {
     private Path path2;
 
     private ContestAccessingServiceImpl service;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws IOException, ParseException {
@@ -134,5 +142,32 @@ public class ContestAccessingServiceImplTest {
         ContestRoot result = service.readContestRoot();
 
         assertThat("generated ContestRoot obj", result, is(nullValue()));
+    }
+
+    @Test
+    public void testWriteContestRoot() throws IOException {
+        PowerMockito.mockStatic(Files.class);
+        PowerMockito.when(Files.createDirectories(any(Path.class))).thenReturn(path2);
+        PowerMockito.when(Files.write(eq(path2), eq(Lists.newArrayList(jsonString)), eq(StandardCharsets.UTF_8),
+                eq(StandardOpenOption.CREATE), eq(StandardOpenOption.TRUNCATE_EXISTING))).thenReturn(path2);
+
+        service.writeContestRoot(jsonString);
+
+        PowerMockito.verifyStatic(Files.class, times(1));
+        Files.createDirectories(path1);
+
+        PowerMockito.verifyStatic(Files.class, times(1));
+        Files.write(eq(path2), eq(Lists.newArrayList(jsonString)), eq(StandardCharsets.UTF_8),
+                eq(StandardOpenOption.CREATE), eq(StandardOpenOption.TRUNCATE_EXISTING));
+    }
+
+    @Test
+    public void shouldHandleIOExceptionInWriteContestRoot() throws IOException {
+        PowerMockito.mockStatic(Files.class);
+        PowerMockito.when(Files.createDirectories(any(Path.class))).thenThrow(new IOException());
+        expectedException.expect(LocalJamStorageRuntimeException.class);
+        expectedException.expectMessage("Error writing main contest json file.");
+
+        service.writeContestRoot(jsonString);
     }
 }
