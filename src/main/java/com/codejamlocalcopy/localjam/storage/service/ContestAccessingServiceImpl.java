@@ -1,7 +1,6 @@
 package com.codejamlocalcopy.localjam.storage.service;
 
-import com.codejamlocalcopy.localjam.LocalJamApplication;
-import com.codejamlocalcopy.localjam.storage.exception.LocalJamStorageException;
+import com.codejamlocalcopy.localjam.storage.exception.LocalJamStorageRuntimeException;
 import com.codejamlocalcopy.localjam.storage.pojo.ContestRoot;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -9,17 +8,13 @@ import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationHome;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.stream.Stream;
 
 /**
  * Implementation of {@link IContestAccessingService}.
@@ -45,20 +40,28 @@ public class ContestAccessingServiceImpl implements IContestAccessingService {
         try {
             jsonString = readFileIntoString(mainContestFilePath);
         } catch (IOException e) {
-            LOG.error("Failed to read main contest file [" + mainContestFilePath + "].", e);
+            LOG.warn("Failed to read main contest file [" + mainContestFilePath + "].", e);
             return null;
         }
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+                .create();
 
         return gson.fromJson(jsonString, ContestRoot.class);
     }
 
     @Override
-    public void writeContestRoot(String json) throws IOException {
+    public void writeContestRoot(String json) {
         Path contestJsonDirPath = filePathService.getContestJsonDirPath();
-        Files.createDirectories(contestJsonDirPath);
-        Files.write(contestJsonDirPath.resolve(MAIN_CONTEST_JSON_FILE_NAME), Lists.newArrayList(json),
-                StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Path mainContestJsonFilePath = contestJsonDirPath.resolve(MAIN_CONTEST_JSON_FILE_NAME);
+        try {
+            Files.createDirectories(contestJsonDirPath);
+            Files.write(mainContestJsonFilePath, Lists.newArrayList(json), StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            LOG.error("Failed to write main contest json file into [{}].", contestJsonDirPath, e);
+            throw new LocalJamStorageRuntimeException("Error writing main contest json file.", e);
+        }
     }
 
     /**

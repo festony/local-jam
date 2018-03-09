@@ -1,6 +1,7 @@
 package com.codejamlocalcopy.localjam.storage.pojo;
 
 import com.google.common.base.Objects;
+import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Date;
@@ -53,7 +54,9 @@ public class ContestRoot {
             public List<Contest> contests;
             public String grouping;
             public String name;
+            @SerializedName("last_contest_start")
             public Date lastContestStart;
+            @SerializedName("display_language")
             public String displayLanguage;
 
             @Override
@@ -116,6 +119,7 @@ public class ContestRoot {
     }
 
     public List<Tab> tabs;
+    @SerializedName("contests_text")
     public String contestsText;
 
     @Override

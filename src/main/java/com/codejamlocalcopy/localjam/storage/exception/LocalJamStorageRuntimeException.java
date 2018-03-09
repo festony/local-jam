@@ -3,13 +3,13 @@ package com.codejamlocalcopy.localjam.storage.exception;
 /**
  * Local jam Storage Exception
  */
-public class LocalJamStorageException extends Exception {
+public class LocalJamStorageRuntimeException extends RuntimeException {
     /**
      * Exception created from message.
      *
      * @param msg The string message to include.
      */
-    public LocalJamStorageException(String msg) {
+    public LocalJamStorageRuntimeException(String msg) {
         super(msg);
     }
 
@@ -19,7 +19,7 @@ public class LocalJamStorageException extends Exception {
      * @param msg The string message to include.
      * @param cause The cause of this exception.
      */
-    public LocalJamStorageException(String msg, Throwable cause) {
+    public LocalJamStorageRuntimeException(String msg, Throwable cause) {
         super(msg, cause);
     }
 
@@ -28,7 +28,7 @@ public class LocalJamStorageException extends Exception {
      *
      * @param cause The cause of this exception.
      */
-    public LocalJamStorageException(Throwable cause) {
+    public LocalJamStorageRuntimeException(Throwable cause) {
         super(cause);
     }
 }

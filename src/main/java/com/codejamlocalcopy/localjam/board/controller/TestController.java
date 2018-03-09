@@ -26,11 +26,7 @@ public class TestController {
 
     @RequestMapping("/")
     public String index() {
-        try {
-            contestAccessingService.readContestRoot();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        contestAccessingService.readContestRoot();
         return "index";
     }
 }

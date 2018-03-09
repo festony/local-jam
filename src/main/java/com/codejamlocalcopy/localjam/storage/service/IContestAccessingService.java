@@ -1,6 +1,7 @@
 package com.codejamlocalcopy.localjam.storage.service;
 
 import com.codejamlocalcopy.localjam.storage.pojo.ContestRoot;
+import com.codejamlocalcopy.localjam.storage.exception.LocalJamStorageRuntimeException;
 
 import java.io.IOException;
 
@@ -20,7 +21,7 @@ public interface IContestAccessingService {
      * Write ContestRoot - the pojo object of contests main board - into storage file.
      *
      * @param json - json string
-     * @throws IOException IOException
+     * @throws LocalJamStorageRuntimeException when fail to do Files operations.
      */
-    void writeContestRoot(String json) throws IOException;
+    void writeContestRoot(String json);
 }

@@ -40,7 +40,7 @@ public class ContestFilePathServiceImpl implements IContestFilePathService {
     private Path contestJsonDirPath;
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() {
         // no specified config: use default location - the running jar location + /storage .
         if (StringUtils.isBlank(contestFileRootPath)) {
             contestFileRootPath = new ApplicationHome(LocalJamApplication.class).getDir().toPath().

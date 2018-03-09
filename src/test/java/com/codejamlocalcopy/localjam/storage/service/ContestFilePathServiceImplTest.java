@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -26,8 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 /**
  * Tests {@link ContestFilePathServiceImpl}
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ContestFilePathServiceImpl.class, Files.class})
+@RunWith(MockitoJUnitRunner.class)
 public class ContestFilePathServiceImplTest {
 
     private ContestFilePathServiceImpl service;
@@ -39,9 +39,6 @@ public class ContestFilePathServiceImplTest {
 
     @Test
     public void shouldPickJarLocationAsRootParentDir() throws Exception {
-        PowerMockito.mockStatic(Files.class);
-        PowerMockito.when(Files.createDirectories(any(Path.class))).thenReturn(null);
-
         Path root = new ApplicationHome(LocalJamApplication.class).getDir().toPath().resolve("storage");
         Path expectedDataDirPath = root.resolve("data");
         Path expectedImageDirPath = root.resolve("image");
@@ -54,20 +51,10 @@ public class ContestFilePathServiceImplTest {
         assertThat("data path", service.getContestDataDirPath(), equalTo(expectedDataDirPath));
         assertThat("image path", service.getContestImageDirPath(), equalTo(expectedImageDirPath));
         assertThat("json path", service.getContestJsonDirPath(), equalTo(expectedJsonDirPath));
-
-        verifyStatic(Files.class, times(1));
-        Files.createDirectories(expectedDataDirPath);
-        verifyStatic(Files.class, times(1));
-        Files.createDirectories(expectedImageDirPath);
-        verifyStatic(Files.class, times(1));
-        Files.createDirectories(expectedJsonDirPath);
     }
 
     @Test
     public void shouldPickSpecifiedLocationAsRootParentDir() throws Exception {
-        PowerMockito.mockStatic(Files.class);
-        PowerMockito.when(Files.createDirectories(any(Path.class))).thenReturn(null);
-
         Path root = Paths.get("/tmp/testStorage");
         Path expectedDataDirPath = root.resolve("data");
         Path expectedImageDirPath = root.resolve("image");
@@ -80,12 +67,5 @@ public class ContestFilePathServiceImplTest {
         assertThat("data path", service.getContestDataDirPath(), equalTo(expectedDataDirPath));
         assertThat("image path", service.getContestImageDirPath(), equalTo(expectedImageDirPath));
         assertThat("json path", service.getContestJsonDirPath(), equalTo(expectedJsonDirPath));
-
-        verifyStatic(Files.class, times(1));
-        Files.createDirectories(expectedDataDirPath);
-        verifyStatic(Files.class, times(1));
-        Files.createDirectories(expectedImageDirPath);
-        verifyStatic(Files.class, times(1));
-        Files.createDirectories(expectedJsonDirPath);
     }
 }

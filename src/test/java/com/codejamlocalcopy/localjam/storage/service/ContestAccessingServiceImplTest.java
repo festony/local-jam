@@ -3,21 +3,33 @@ package com.codejamlocalcopy.localjam.storage.service;
 import com.codejamlocalcopy.localjam.storage.pojo.ContestRoot;
 import com.codejamlocalcopy.localjam.test.common.TestUtils;
 import com.google.common.collect.Lists;
+import com.google.gson.GsonBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests {@link ContestAccessingServiceImpl}
@@ -27,10 +39,17 @@ import static org.junit.Assert.fail;
 public class ContestAccessingServiceImplTest {
 
     private String jsonString;
+
     private ContestRoot expectedContestRootPojo;
 
     @Mock
     private IContestFilePathService filePathService;
+
+    @Mock
+    private Path path1;
+
+    @Mock
+    private Path path2;
 
     private ContestAccessingServiceImpl service;
 
@@ -73,7 +92,7 @@ public class ContestAccessingServiceImplTest {
 
         ContestRoot.Tab.Tournament tournament2 = tab1.new Tournament();
         tournament2.contests = Lists.newArrayList();
-        tournament2.grouping = "test tab label 2";
+        tournament2.grouping = "test tab label 1";
         tournament2.name = "test tournament name 2";
         tournament2.lastContestStart = sdf.parse("2017-11-25T07:10:00+00:00");
         tournament2.displayLanguage = "zh";
@@ -83,16 +102,37 @@ public class ContestAccessingServiceImplTest {
         tab1.label = "test tab label 1";
 
         ContestRoot.Tab tab2 = expectedContestRootPojo.new Tab();
-        tab1.order = 34;
+        tab2.order = 34;
         tab2.tournaments = Lists.newArrayList();
         tab2.id = "test tab id 2";
         tab2.label = "test tab label 2";
 
         expectedContestRootPojo.tabs = Lists.newArrayList(tab1, tab2);
         expectedContestRootPojo.contestsText = "test contests text";
+
+        when(filePathService.getContestJsonDirPath()).thenReturn(path1);
+        when(path1.resolve(any(String.class))).thenReturn(path2);
     }
 
     @Test
-    public void test1() throws IOException {
+    public void testReadContestRoot() throws IOException {
+        Stream<String> fileContent = Lists.newArrayList(jsonString.split("\n")).stream();
+
+        PowerMockito.mockStatic(Files.class);
+        PowerMockito.when(Files.lines(any(Path.class), eq(StandardCharsets.UTF_8))).thenReturn(fileContent);
+
+        ContestRoot result = service.readContestRoot();
+
+        assertThat("generated ContestRoot obj", result, equalTo(expectedContestRootPojo));
+    }
+
+    @Test
+    public void shouldReturnNullForReadContestRoot() throws IOException {
+        PowerMockito.mockStatic(Files.class);
+        PowerMockito.when(Files.lines(any(Path.class), eq(StandardCharsets.UTF_8))).thenThrow(new IOException());
+
+        ContestRoot result = service.readContestRoot();
+
+        assertThat("generated ContestRoot obj", result, is(nullValue()));
     }
 }
