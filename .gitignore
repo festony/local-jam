@@ -26,3 +26,8 @@ nbdist/
 
 ### JENV ###
 .java-version
+
+### VS Code ###
+.vscode
+/bin
+
